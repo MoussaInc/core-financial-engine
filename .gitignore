@@ -1,0 +1,30 @@
+
+# Environnement virtuel
+.venv/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Tests
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Fichiers de sortie générés
+output/*.xlsx
+output/*.json
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Audit trail (généré à l'exécution)
+audit_trail.jsonl
