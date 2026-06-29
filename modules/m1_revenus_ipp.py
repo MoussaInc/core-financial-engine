@@ -9,10 +9,8 @@ import pandas as pd
 from config.constants import ANNEES, NB_PROJETS_IPP
 
 
-# ---------------------------------------------------------------------------
 # Bloc 1 : Données des 35 projets
 # ---------------------------------------------------------------------------
-
 def _generer_projets() -> pd.DataFrame:
     """
     Génère un portefeuille fictif mais réaliste de 35 projets EnR.
@@ -64,10 +62,8 @@ PROJETS = _generer_projets()
 
 
 
-# ---------------------------------------------------------------------------
 # Bloc 2 : Calcul de l'EBITDA annuel par projet
 # ---------------------------------------------------------------------------
-
 def calculer_revenus_ipp(scenario: dict) -> pd.DataFrame:
     """
     Calcule l'EBITDA de chaque projet IPP sur 2026-2031.
@@ -106,31 +102,16 @@ def calculer_revenus_ipp(scenario: dict) -> pd.DataFrame:
                 continue
 
             # --- Production annuelle (MWh) ---
-            production_mwh = (
-                projet["capacite_mw"]
-                * projet["facteur_charge"]
-                * projet["disponibilite"]
-                * fp
-                * 8_760
-            )
+            production_mwh = projet["capacite_mw"] * projet["facteur_charge"] * projet["disponibilite"] * fp * 8_760
 
             # --- Tarif indexé (€/MWh) ---
-            tarif_indexe = (
-                projet["tarif_eur_mwh"]
-                * fpe
-                * (1 + 0.7 * inf) ** i
-            )
+            tarif_indexe = projet["tarif_eur_mwh"] * fpe * (1 + 0.7 * inf) ** i
 
             # --- Revenus bruts (€) ---
             revenus_bruts = production_mwh * tarif_indexe
 
             # --- OPEX (€) ---
-            opex = (
-                projet["opex_eur_mw"]
-                * projet["capacite_mw"]
-                * fo
-                * (1 + inf) ** i
-            )
+            opex = projet["opex_eur_mw"] * projet["capacite_mw"] * fo * (1 + inf) ** i
 
             # --- EBITDA projet (k€) ---
             revenus_par_annee[annee] = round((revenus_bruts - opex) / 1_000, 1)
@@ -147,10 +128,8 @@ def calculer_revenus_ipp(scenario: dict) -> pd.DataFrame:
 
 
 
-# ---------------------------------------------------------------------------
 # Bloc 3 : Agrégations
 # ---------------------------------------------------------------------------
-
 def aggreger_par_pays(df_ipp: pd.DataFrame) -> pd.DataFrame:
     """
     Agrège l'EBITDA IPP par pays sur 2026-2031.
@@ -161,13 +140,7 @@ def aggreger_par_pays(df_ipp: pd.DataFrame) -> pd.DataFrame:
         Colonnes : pays, 2026, 2027, ..., 2031
         Valeurs en k€.
     """
-    return (
-        df_ipp
-        .groupby("pays")[ANNEES]
-        .sum()
-        .reset_index()
-    )
-
+    return df_ipp.groupby("pays")[ANNEES].sum().reset_index()
 
 def aggreger_par_technologie(df_ipp: pd.DataFrame) -> pd.DataFrame:
     """
@@ -179,12 +152,7 @@ def aggreger_par_technologie(df_ipp: pd.DataFrame) -> pd.DataFrame:
         Colonnes : technologie, 2026, 2027, ..., 2031
         Valeurs en k€.
     """
-    return (
-        df_ipp
-        .groupby("technologie")[ANNEES]
-        .sum()
-        .reset_index()
-    )
+    return df_ipp.groupby("technologie")[ANNEES].sum().reset_index()
 
 
 def aggreger_total(df_ipp: pd.DataFrame) -> pd.Series:
